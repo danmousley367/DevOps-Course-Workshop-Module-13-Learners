@@ -1,4 +1,3 @@
-from flask import Flask, render_template, request
 from datetime import datetime, timezone
 
 from werkzeug.utils import redirect
@@ -15,6 +14,8 @@ logging.basicConfig(level=logging.INFO)
 configure_azure_monitor(
     connection_string=os.getenv('APPLICATIONINSIGHTS_CONNECTION_STRING')
 )
+
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 app.config.from_object(Config)
