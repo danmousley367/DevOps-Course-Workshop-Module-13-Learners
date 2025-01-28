@@ -19,20 +19,20 @@ def initialise_scheduled_jobs(app):
 
 
 def process_orders(app):
-    try:
-        with app.app_context():
-            orders = get_queue_of_orders_to_process()
-            if len(orders) == 0:
-                return
+    with app.app_context():
+        orders = get_queue_of_orders_to_process()
+        if len(orders) == 0:
+            return
 
-            order = orders[0]
+        order = orders[0]
 
-            payload = {
-                "product": order.product,
-                "customer": order.customer,
-                "date": order.date_placed_local.isoformat(),
-            }
+        payload = {
+            "product": order.product,
+            "customer": order.customer,
+            "date": order.date_placed_local.isoformat(),
+        }
 
+        try:
             response = requests.post(
                 app.config["FINANCE_PACKAGE_URL"] + "/ProcessPayment",
                 json=payload
@@ -45,11 +45,13 @@ def process_orders(app):
 
             order.set_as_processed()
             save_order(order)
-    except:
-        app.logger.exception("Error processing order {id}".format(id = order.id))
+        except:
+            app.logger.exception("Error processing order {id}".format(id = order.id))
+            order.set_as_failed()
+
 
 def get_queue_of_orders_to_process():
     allOrders = get_all_orders()
-    queuedOrders = filter(lambda order: order.date_processed == None, allOrders)
+    queuedOrders = filter(lambda order: order.date_processed == None and order.status != 'Failed', allOrders)
     sortedQueue = sorted(queuedOrders, key= lambda order: order.date_placed)
     return list(sortedQueue)
