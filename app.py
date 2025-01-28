@@ -9,9 +9,12 @@ from products import create_product_download
 import requests
 from azure.monitor.opentelemetry import configure_azure_monitor
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
-configure_azure_monitor()
+configure_azure_monitor(
+    connection_string=os.getenv('APPLICATIONINSIGHTS_CONNECTION_STRING')
+)
 
 app = Flask(__name__)
 app.config.from_object(Config)
