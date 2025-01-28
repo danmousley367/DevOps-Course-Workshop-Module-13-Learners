@@ -12,7 +12,8 @@ import os
 
 logging.basicConfig(level=logging.INFO)
 configure_azure_monitor(
-    connection_string=os.getenv('APPLICATIONINSIGHTS_CONNECTION_STRING')
+    connection_string=os.getenv('APPLICATIONINSIGHTS_CONNECTION_STRING'),
+    enable_live_metrics = True
 )
 
 from flask import Flask, render_template, request
