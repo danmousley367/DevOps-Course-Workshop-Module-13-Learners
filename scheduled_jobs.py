@@ -3,6 +3,7 @@ from products import create_product_download
 from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 import logging
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -36,7 +37,7 @@ def process_orders(app):
             json=payload
         )
 
-        app.logger.info("Request payload: " + payload)
+        app.logger.info("Request payload: " + json.dumps(payload))
         app.logger.info("Response from endpoint: " + response.text)
 
         response.raise_for_status()
